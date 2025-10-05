@@ -2889,3 +2889,24 @@
 {"action":"get_profile","ip":"127.0.0.1","level":"info","message":"User activity: diptanshuvishwa364@gmail.com performed get_profile","timestamp":"2025-10-06 02:06:09","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0","userId":"68e19070721b4be70a4ead28"}
 {"count":5,"filters":{},"level":"info","message":"Alerts retrieved","page":1,"timestamp":"2025-10-06 02:06:11","total":5,"userId":"68e19070721b4be70a4ead28"}
 {"count":5,"filters":{},"level":"info","message":"Alerts retrieved","page":1,"timestamp":"2025-10-06 02:06:11","total":5,"userId":"68e19070721b4be70a4ead28"}
+{"level":"warn","message":"Google OAuth credentials not configured - Google authentication will be unavailable","timestamp":"2025-10-06 02:58:59"}
+{"level":"info","message":"SMS Service initialized with AWS SNS","timestamp":"2025-10-06 02:59:00"}
+{"level":"info","message":"SMS Service initialized with Twilio","timestamp":"2025-10-06 02:59:00"}
+{"level":"info","message":"🚀 Initializing global cloud services...","timestamp":"2025-10-06 02:59:03"}
+{"level":"info","message":"Server running in development mode on 0.0.0.0:5000","timestamp":"2025-10-06 02:59:03"}
+{"level":"info","message":"Network access available at: http://192.168.0.194:5000","timestamp":"2025-10-06 02:59:03"}
+{"level":"error","message":"Error creating SNS topic PashuMitra-Critical-Alerts:","timestamp":"2025-10-06 02:59:03"}
+{"level":"info","message":"✅ MongoDB Connected: MongoDB Atlas Cluster/PashuMitra","timestamp":"2025-10-06 02:59:03"}
+{"level":"info","message":"📊 Database: PashuMitra","timestamp":"2025-10-06 02:59:03"}
+{"level":"error","message":"Error creating SNS topic PashuMitra-Warning-Alerts:","timestamp":"2025-10-06 02:59:03"}
+{"level":"error","message":"Error creating SNS topic PashuMitra-Appointment-Reminders:","timestamp":"2025-10-06 02:59:04"}
+{"level":"info","message":"SNS Topic created: PashuMitra-Veterinarian-Notifications - arn:aws:sns:ap-south-1:360121241405:PashuMitra-Veterinarian-Notifications","timestamp":"2025-10-06 02:59:04"}
+{"level":"error","message":"Error creating SNS topic PashuMitra-General-Notifications:","timestamp":"2025-10-06 02:59:04"}
+{"level":"info","message":"SNS topics initialized","timestamp":"2025-10-06 02:59:04","topics":["VETERINARIAN_NOTIFICATION"]}
+{"level":"info","message":"🔍 Testing service connectivity...","timestamp":"2025-10-06 02:59:04"}
+{"level":"info","message":"✅ SNS connectivity test passed","timestamp":"2025-10-06 02:59:04"}
+{"level":"info","message":"✅ SES connectivity test passed","timestamp":"2025-10-06 02:59:04"}
+{"level":"info","message":"✅ Twilio connectivity test passed","timestamp":"2025-10-06 02:59:05"}
+{"level":"info","message":"✅ CloudWatch connectivity test passed","timestamp":"2025-10-06 02:59:05"}
+{"cloudwatch":true,"level":"info","message":"🔍 Service connectivity tests completed","ses":true,"sns":true,"timestamp":"2025-10-06 02:59:05","twilio":true}
+{"level":"info","message":"✅ All global services initialized successfully","timestamp":"2025-10-06 02:59:05"}
