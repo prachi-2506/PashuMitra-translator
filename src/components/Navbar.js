@@ -28,11 +28,11 @@ const NavbarContainer = styled.nav`
   border-bottom: 1px solid rgba(255, 127, 80, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   z-index: 1000;
-  height: 70px;
+  height: 90px;
   transition: all 0.3s ease;
   
   @media (max-width: 768px) {
-    height: 75px;
+    height: 85px;
     background: rgba(255, 255, 255, 0.98);
   }
 `;
@@ -65,8 +65,8 @@ const Logo = styled(Link)`
   max-width: calc(100% - 320px);
   
   img {
-    height: 45px;
-    width: 45px;
+    height: 100px;
+    width: 100px;
     object-fit: contain;
     margin-right: 12px;
     transition: transform 0.3s ease;
@@ -86,7 +86,7 @@ const Logo = styled(Link)`
   }
   
   .logo-text {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--primary-coral);
     letter-spacing: -0.5px;
@@ -130,13 +130,13 @@ const Logo = styled(Link)`
     max-width: calc(100% - 200px);
     
     img {
-      height: 32px;
-      width: 32px;
-      margin-right: 6px;
+      height: 65px;
+      width: 65px;
+      margin-right: 8px;
     }
     
     .logo-text {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1;
     }
   }
@@ -145,13 +145,13 @@ const Logo = styled(Link)`
     max-width: calc(100% - 160px);
     
     img {
-      height: 28px;
-      width: 28px;
-      margin-right: 4px;
+      height: 55px;
+      width: 55px;
+      margin-right: 6px;
     }
     
     .logo-text {
-      font-size: 14px;
+      font-size: 12px;
     }
   }
   
@@ -159,13 +159,13 @@ const Logo = styled(Link)`
     max-width: calc(100% - 140px);
     
     img {
-      height: 24px;
-      width: 24px;
-      margin-right: 3px;
+      height: 50px;
+      width: 50px;
+      margin-right: 4px;
     }
     
     .logo-text {
-      font-size: 12px;
+      font-size: 10px;
     }
   }
 `;
