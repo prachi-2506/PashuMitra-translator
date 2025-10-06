@@ -174,25 +174,7 @@ export const getTranslation = (text, currentLanguage, params = {}) => {
       'Terms of Service': 'सेवा की शर्तें',
       'Privacy Policy': 'गोपनीयता नीति',
       
-      // Auth Page Additional
-      'Welcome Back': 'फिर से स्वागत है',
-      'Join PashuMitra': 'पशुमित्र से जुड़ें',
-      'Welcome to PashuMitra - Your Partner in Farm Protection': 'पशुमित्र में आपका स्वागत है - खेत सुरक्षा में आपका साथी',
-      'Login': 'लॉगिन',
-      'Sign Up': 'साइन अप',
-      'Login with Google': 'गूगल से लॉगिन करें',
-      'Sign up with Google': 'गूगल से साइन अप करें',
-      'Or continue with': 'या जारी रखें',
-      'Full Name': 'पूरा नाम',
-      'Phone Number': 'फोन नंबर',
-      'Farm Location': 'खेत का स्थान',
-      'Email Address': 'ईमेल पता',
-      'Password': 'पासवर्ड',
-      'Confirm Password': 'पासवर्ड की पुष्टि करें',
-      'Please wait...': 'कृपया प्रतीक्षा करें...',
-      'Forgot Password?': 'पासवर्ड भूल गए?',
-      'Don\'t have an account?': 'क्या आपका खाता नहीं है?',
-      'Already have an account?': 'क्या आपका पहले से खाता है?',
+      // Auth Page Additional (avoiding duplicates)
       'Enter your full name (letters and spaces only)': 'अपना पूरा नाम दर्ज करें (केवल अक्षर और स्थान)',
       'Enter your phone number': 'अपना फोन नंबर दर्ज करें',
       'Enter your farm location': 'अपने खेत का स्थान दर्ज करें',
@@ -239,7 +221,6 @@ export const getTranslation = (text, currentLanguage, params = {}) => {
       'Signing In...': 'साइन इन की जा रही है...',
       'Logging in...': 'लॉग इन की जा रही है...',
       'Creating Account...': 'खाता बनाया जा रहा है...',
-      'Sign In': 'साइन इन',
       'Create Account': 'खाता बनाएं',
       
       // Dashboard
