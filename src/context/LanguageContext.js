@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import i18n from '../utils/i18n';
 import { aiTranslationService } from '../services/aiTranslationService';
+import { showInfo, showSuccess, showError } from '../services/notificationService';
 
 const LanguageContext = createContext();
 
@@ -12,35 +13,29 @@ export const useLanguage = () => {
   return context;
 };
 
-// Indian languages supported
+// Supported languages - English + 9 Indian languages in specified order
 export const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिंदी' },
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
+  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
   { code: 'te', name: 'Telugu', nativeName: 'తెలుగు' },
   { code: 'mr', name: 'Marathi', nativeName: 'मराठी' },
-  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
-  { code: 'ur', name: 'Urdu', nativeName: 'اردو' },
   { code: 'gu', name: 'Gujarati', nativeName: 'ગુજરાતી' },
   { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
   { code: 'ml', name: 'Malayalam', nativeName: 'മലയാളം' },
-  { code: 'or', name: 'Odia', nativeName: 'ଓଡ଼ିଆ' },
-  { code: 'pa', name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ' },
-  { code: 'as', name: 'Assamese', nativeName: 'অসমীয়া' },
-  { code: 'mai', name: 'Maithili', nativeName: 'মৈথিলী' },
-  { code: 'sa', name: 'Sanskrit', nativeName: 'संस्कृतम्' },
-  { code: 'ne', name: 'Nepali', nativeName: 'नेपाली' },
-  { code: 'sd', name: 'Sindhi', nativeName: 'سنڌي' },
-  { code: 'kok', name: 'Konkani', nativeName: 'कोंकणी' },
-  { code: 'mni', name: 'Manipuri', nativeName: 'ꯃꯤꯇꯩ ꯂꯣꯟ' },
-  { code: 'bo', name: 'Bodo', nativeName: 'बर\'' },
-  { code: 'sat', name: 'Santali', nativeName: 'ᱥᱟᱱᱛᱟᱲᱤ' },
-  { code: 'dgr', name: 'Dogri', nativeName: 'डोगरी' }
+  { code: 'pa', name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ' }
 ];
 
 export const LanguageProvider = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('');
+  const [isFirstTimeLanguage, setIsFirstTimeLanguage] = useState(false);
+
+  // Track languages that have been loaded (models warmed up)
+  const [warmLanguages, setWarmLanguages] = useState(new Set(['en', 'hi'])); // English and Hindi are fast
 
   useEffect(() => {
     // Load saved language preference
@@ -63,30 +58,110 @@ export const LanguageProvider = ({ children }) => {
     };
   }, []);
 
-  const changeLanguage = async (languageCode) => {
-    console.log('🌍 Changing language to:', languageCode);
-    setIsLoading(true);
+  // Preload common translations for a language
+  const preloadLanguage = useCallback(async (languageCode) => {
+    if (languageCode === 'en' || warmLanguages.has(languageCode)) {
+      return; // Already warm
+    }
+
     try {
+      setLoadingMessage(`Warming up ${SUPPORTED_LANGUAGES.find(l => l.code === languageCode)?.name} translation models...`);
+      setLoadingProgress(30);
+
+      // Preload essential UI texts (smaller batch for better reliability)
+      const commonTexts = [
+        "Dashboard", 
+        "Profile",
+        "Settings",
+        "Loading...",
+        "Save"
+      ];
+
+      setLoadingProgress(60);
+      // Use individual translations instead of batch to avoid timeout
+      for (const text of commonTexts) {
+        try {
+          await aiTranslationService.translateText(text, languageCode);
+        } catch (error) {
+          console.warn(`Failed to preload "${text}":`, error);
+          // Continue with other texts even if one fails
+        }
+      }
+      
+      setLoadingProgress(90);
+      
+      // Mark language as warm
+      setWarmLanguages(prev => new Set([...prev, languageCode]));
+      
+      setLoadingProgress(100);
+      console.log(`✅ ${languageCode} language models preloaded and ready!`);
+      
+    } catch (error) {
+      console.warn(`⚠️ Failed to preload ${languageCode}:`, error);
+      // Mark language as warm anyway so it doesn't keep trying
+      setWarmLanguages(prev => new Set([...prev, languageCode]));
+      showError(`Translation models loaded but some features may take longer. ${languageCode} is ready to use.`);
+    }
+  }, [warmLanguages]);
+
+  const changeLanguage = async (languageCode) => {
+    if (currentLanguage === languageCode) {
+      return; // Same language
+    }
+
+    console.log('🌍 Changing language to:', languageCode);
+    
+    const langInfo = SUPPORTED_LANGUAGES.find(lang => lang.code === languageCode);
+    const isFirstTime = !warmLanguages.has(languageCode) && languageCode !== 'en';
+    
+    setIsLoading(true);
+    setLoadingProgress(0);
+    setIsFirstTimeLanguage(isFirstTime);
+
+    try {
+      if (isFirstTime) {
+        // Show user-friendly message for first-time language loading
+        showInfo(`Loading ${langInfo?.nativeName || languageCode} for the first time. This may take 20-30 seconds.`);
+        setLoadingMessage(`Loading ${langInfo?.name} language models...`);
+        setLoadingProgress(10);
+      }
+
+      // Change i18n language first (instant for static translations)
       await i18n.changeLanguage(languageCode);
       setCurrentLanguage(languageCode);
       localStorage.setItem('pashumitra_language', languageCode);
       
+      setLoadingProgress(isFirstTime ? 20 : 80);
+
+      // For non-English languages, preload AI translation models
+      if (languageCode !== 'en' && !warmLanguages.has(languageCode)) {
+        await preloadLanguage(languageCode);
+        showSuccess(`${langInfo?.nativeName} translation is now ready!`);
+      }
+
+      setLoadingProgress(100);
       console.log('✅ Language changed successfully to:', languageCode);
       
-      // Force a re-render of all components using translation
-      // by triggering a state change
-      setTimeout(() => {
-        setCurrentLanguage(languageCode);
-      }, 100);
     } catch (error) {
       console.error('❌ Error changing language:', error);
+      showError(`Failed to change language to ${langInfo?.name}. Please try again.`);
     } finally {
-      setIsLoading(false);
+      // Smooth loading completion
+      setTimeout(() => {
+        setIsLoading(false);
+        setLoadingProgress(0);
+        setLoadingMessage('');
+        setIsFirstTimeLanguage(false);
+      }, 500);
     }
   };
 
   const getCurrentLanguage = () => {
     return SUPPORTED_LANGUAGES.find(lang => lang.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
+  };
+
+  const isLanguageReady = (langCode) => {
+    return langCode === 'en' || warmLanguages.has(langCode);
   };
 
   const t = (key, options = {}) => {
@@ -99,6 +174,12 @@ export const LanguageProvider = ({ children }) => {
     changeLanguage,
     getCurrentLanguage,
     isLoading,
+    loadingProgress,
+    loadingMessage,
+    isFirstTimeLanguage,
+    isLanguageReady,
+    warmLanguages: Array.from(warmLanguages),
+    preloadLanguage,
     t
   };
 

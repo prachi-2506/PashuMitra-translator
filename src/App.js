@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import LanguageLoadingModal from './components/LanguageLoadingModal';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Auth from './components/EnhancedAuth';
@@ -66,6 +68,19 @@ function App() {
               </Routes>
             </main>
             <Footer />
+            
+            {/* Enhanced UX Components */}
+            <LanguageLoadingModal />
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+              }}
+            />
           </div>
         </Router>
       </AuthProvider>
