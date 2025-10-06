@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FiGlobe, FiLoader } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { getTranslation } from '../utils/translations';
 import FormInput from './form/FormInput';
 import {
   validateEmail,
@@ -195,7 +196,8 @@ const ForgotPasswordLink = styled.button`
 
 const EnhancedAuth = () => {
   const { login, register, forgotPassword, isAuthenticated } = useAuth();
-  const { t } = useLanguage();
+  const { currentLanguage } = useLanguage();
+  const getPageTranslation = (text) => getTranslation(text, currentLanguage);
   const navigate = useNavigate();
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
@@ -331,7 +333,7 @@ const EnhancedAuth = () => {
       window.location.href = `${API_URL}/auth/google`;
     } catch (error) {
       console.error('Google auth error:', error);
-      toast.error('Failed to initiate Google authentication. Please try again.');
+      toast.error(getPageTranslation('Failed to initiate Google authentication. Please try again.'));
     }
   };
 
@@ -340,7 +342,7 @@ const EnhancedAuth = () => {
     
     // Validate entire form
     if (!validateAllFields()) {
-      toast.error('Please fix the errors below');
+      toast.error(getPageTranslation('Please fix the errors below'));
       return;
     }
 
@@ -365,7 +367,7 @@ const EnhancedAuth = () => {
       if (result.success) {
         if (isLogin) {
           // Login successful - proceed normally
-          toast.success('Login successful!');
+          toast.success(getPageTranslation('Login successful!'));
           const searchParams = new URLSearchParams(location.search);
           const redirectTo = searchParams.get('redirect') || '/';
           
@@ -378,7 +380,7 @@ const EnhancedAuth = () => {
           
           if (result.token && result.data?.user) {
             // User is verified and has token - proceed to questionnaire
-            toast.success('Registration successful! Email already verified.');
+            toast.success(getPageTranslation('Registration successful! Email already verified.'));
             setTimeout(() => {
               navigate('/questionnaire');
             }, 1500);
@@ -391,10 +393,10 @@ const EnhancedAuth = () => {
           }
         }
       } else {
-        toast.error(result.error || 'Authentication failed');
+        toast.error(result.error || getPageTranslation('Authentication failed'));
       }
     } catch (error) {
-      toast.error('An unexpected error occurred. Please try again.');
+      toast.error(getPageTranslation('An unexpected error occurred. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -405,7 +407,7 @@ const EnhancedAuth = () => {
     
     const emailValidation = validateEmail(formData.email);
     if (!emailValidation.isValid) {
-      toast.error('Please enter a valid email address');
+      toast.error(getPageTranslation('Please enter a valid email address'));
       return;
     }
 
@@ -415,13 +417,13 @@ const EnhancedAuth = () => {
       const result = await forgotPassword(formData.email);
       
       if (result.success) {
-        toast.success('Password reset instructions have been sent to your email.');
+        toast.success(getPageTranslation('Password reset instructions have been sent to your email.'));
         setShowForgotPassword(false);
       } else {
-        toast.error(result.error || 'Failed to send reset email');
+        toast.error(result.error || getPageTranslation('Failed to send reset email'));
       }
     } catch (error) {
-      toast.error('An unexpected error occurred. Please try again.');
+      toast.error(getPageTranslation('An unexpected error occurred. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -444,19 +446,19 @@ const EnhancedAuth = () => {
           transition={{ duration: 0.6 }}
         >
           <AuthHeader>
-            <h1>Reset Password</h1>
-            <p>Enter your email address to receive reset instructions</p>
+            <h1>{getPageTranslation('Reset Password')}</h1>
+            <p>{getPageTranslation('Enter your email address to receive reset instructions')}</p>
           </AuthHeader>
 
           <form onSubmit={handleForgotPasswordSubmit}>
             <FormInput
               type="email"
-              label="Email Address"
+              label={getPageTranslation('Email Address')}
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              placeholder="Enter your email"
+              placeholder={getPageTranslation('Enter your email')}
               required
               error={validationErrors.email?.errors}
               disabled={isSubmitting}
@@ -471,20 +473,20 @@ const EnhancedAuth = () => {
               {isSubmitting ? (
                 <>
                   <FiLoader className="rotating" />
-                  Sending...
+                  {getPageTranslation('Sending...')}
                 </>
               ) : (
-                'Send Reset Instructions'
+                getPageTranslation('Send Reset Instructions')
               )}
             </SubmitButton>
 
             <SwitchText>
-              Remember your password?{' '}
+              {getPageTranslation('Remember your password?')}{' '}
               <button 
                 type="button" 
                 onClick={() => setShowForgotPassword(false)}
               >
-                Back to Login
+                {getPageTranslation('Back to Login')}
               </button>
             </SwitchText>
           </form>
@@ -501,8 +503,8 @@ const EnhancedAuth = () => {
         transition={{ duration: 0.6 }}
       >
         <AuthHeader>
-          <h1>{isLogin ? 'Welcome Back' : 'Join PashuMitra'}</h1>
-          <p>Welcome to PashuMitra - Your Partner in Farm Protection</p>
+          <h1>{getPageTranslation(isLogin ? 'Welcome Back' : 'Join PashuMitra')}</h1>
+          <p>{getPageTranslation('Welcome to PashuMitra - Your Partner in Farm Protection')}</p>
         </AuthHeader>
 
         <TabContainer>
@@ -510,13 +512,13 @@ const EnhancedAuth = () => {
             active={isLogin}
             onClick={() => setIsLogin(true)}
           >
-            Login
+            {getPageTranslation('Login')}
           </Tab>
           <Tab
             active={!isLogin}
             onClick={() => setIsLogin(false)}
           >
-            Sign Up
+            {getPageTranslation('Sign Up')}
           </Tab>
         </TabContainer>
 
@@ -527,11 +529,11 @@ const EnhancedAuth = () => {
           whileTap={{ scale: 0.98 }}
         >
           <FiGlobe />
-          {isLogin ? 'Login with Google' : 'Sign up with Google'}
+          {getPageTranslation(isLogin ? 'Login with Google' : 'Sign up with Google')}
         </GoogleButton>
 
         <Divider>
-          <span>Or continue with</span>
+          <span>{getPageTranslation('Or continue with')}</span>
         </Divider>
 
         <form onSubmit={handleSubmit}>
@@ -540,12 +542,12 @@ const EnhancedAuth = () => {
             <>
               <FormInput
                 type="email"
-                label="Email Address"
+                label={getPageTranslation('Email Address')}
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Enter your email"
+                placeholder={getPageTranslation('Enter your email')}
                 required
                 error={validationErrors.email?.errors}
                 disabled={isSubmitting}
@@ -553,12 +555,12 @@ const EnhancedAuth = () => {
 
               <FormInput
                 type="password"
-                label="Password"
+                label={getPageTranslation('Password')}
                 name="password"
                 value={formData.password}
-onChange={handleInputChange}
+                onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Enter your password"
+                placeholder={getPageTranslation('Enter your password')}
                 required
                 error={validationErrors.password?.errors}
                 disabled={isSubmitting}
@@ -568,7 +570,7 @@ onChange={handleInputChange}
                 type="button"
                 onClick={() => setShowForgotPassword(true)}
               >
-                Forgot your password?
+                {getPageTranslation('Forgot your password?')}
               </ForgotPasswordLink>
             </>
           ) : (
@@ -576,12 +578,12 @@ onChange={handleInputChange}
             <FormGrid>
               <FormInput
                 type="text"
-                label="First Name"
+                label={getPageTranslation('First Name')}
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="First name"
+                placeholder={getPageTranslation('First name')}
                 required
                 error={validationErrors.firstName?.errors}
                 disabled={isSubmitting}
@@ -590,12 +592,12 @@ onChange={handleInputChange}
 
               <FormInput
                 type="text"
-                label="Last Name"
+                label={getPageTranslation('Last Name')}
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Last name"
+                placeholder={getPageTranslation('Last name')}
                 required
                 error={validationErrors.lastName?.errors}
                 disabled={isSubmitting}
@@ -604,12 +606,12 @@ onChange={handleInputChange}
 
               <FormInput
                 type="email"
-                label="Email Address"
+                label={getPageTranslation('Email Address')}
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Enter your email"
+                placeholder={getPageTranslation('Enter your email')}
                 required
                 error={validationErrors.email?.errors}
                 disabled={isSubmitting}
@@ -618,12 +620,12 @@ onChange={handleInputChange}
 
               <FormInput
                 type="tel"
-                label="Phone Number"
+                label={getPageTranslation('Phone Number')}
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="+91 98765 43210"
+                placeholder={getPageTranslation('+91 98765 43210')}
                 required
                 error={validationErrors.phone?.errors}
                 disabled={isSubmitting}
@@ -632,12 +634,12 @@ onChange={handleInputChange}
 
               <FormInput
                 type="text"
-                label="Farm Location"
+                label={getPageTranslation('Farm Location')}
                 name="farmLocation"
                 value={formData.farmLocation}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Enter your farm location"
+                placeholder={getPageTranslation('Enter your farm location')}
                 required
                 error={validationErrors.farmLocation?.errors}
                 disabled={isSubmitting}
@@ -647,12 +649,12 @@ onChange={handleInputChange}
 
               <FormInput
                 type="password"
-                label="Password"
+                label={getPageTranslation('Password')}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Create a strong password"
+                placeholder={getPageTranslation('Create a strong password')}
                 required
                 error={validationErrors.password?.errors}
                 warning={passwordValidation.warnings}
@@ -664,15 +666,15 @@ onChange={handleInputChange}
 
               <FormInput
                 type="password"
-                label="Confirm Password"
+                label={getPageTranslation('Confirm Password')}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                placeholder="Confirm your password"
+                placeholder={getPageTranslation('Confirm your password')}
                 required
                 error={validationErrors.confirmPassword?.errors}
-                success={formData.confirmPassword && formData.password === formData.confirmPassword ? 'Passwords match' : null}
+                success={formData.confirmPassword && formData.password === formData.confirmPassword ? getPageTranslation('Passwords match') : null}
                 disabled={isSubmitting}
                 className="full-width"
               />
@@ -688,20 +690,20 @@ onChange={handleInputChange}
             {isSubmitting ? (
               <>
                 <FiLoader className="rotating" />
-                {isLogin ? 'Signing In...' : 'Creating Account...'}
+                {getPageTranslation(isLogin ? 'Logging in...' : 'Creating Account...')}
               </>
             ) : (
-              isLogin ? 'Sign In' : 'Create Account'
+              getPageTranslation(isLogin ? 'Login' : 'Create Account')
             )}
           </SubmitButton>
 
           <SwitchText>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            {getPageTranslation(isLogin ? "Don't have an account? " : "Already have an account? ")}
             <button 
               type="button" 
               onClick={() => setIsLogin(!isLogin)}
             >
-              {isLogin ? 'Sign Up' : 'Sign In'}
+              {getPageTranslation(isLogin ? 'Sign Up' : 'Login')}
             </button>
           </SwitchText>
         </form>

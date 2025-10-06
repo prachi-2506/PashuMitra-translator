@@ -251,7 +251,7 @@ const Auth = () => {
       
     } catch (error) {
       console.error('Google auth error:', error);
-      setError('Failed to initiate Google authentication. Please try again.');
+      setError(getPageTranslation('Failed to initiate Google authentication. Please try again.'));
       setLoading(false);
     }
   };
@@ -266,27 +266,27 @@ const Auth = () => {
       if (!isLogin) {
         // Signup validation
         if (formData.password !== formData.confirmPassword) {
-          throw new Error('Passwords do not match');
+          throw new Error(getPageTranslation('Passwords do not match'));
         }
         
         if (!formData.name || !formData.phone || !formData.farmLocation) {
-          throw new Error('All fields are required for signup');
+          throw new Error(getPageTranslation('All fields are required for signup'));
         }
         
         if (formData.password.length < 6) {
-          throw new Error('Password must be at least 6 characters long');
+          throw new Error(getPageTranslation('Password must be at least 6 characters long'));
         }
         
         // Check password complexity
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
         if (!passwordRegex.test(formData.password)) {
-          throw new Error('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+          throw new Error(getPageTranslation('Password must contain at least one uppercase letter, one lowercase letter, and one number'));
         }
         
         // Check name contains only letters and spaces
         const nameRegex = /^[a-zA-Z\s]+$/;
         if (!nameRegex.test(formData.name)) {
-          throw new Error('Name can only contain letters and spaces');
+          throw new Error(getPageTranslation('Name can only contain letters and spaces'));
         }
       }
 
@@ -308,7 +308,7 @@ const Auth = () => {
         : await register(userData);
 
       if (result.success) {
-        setSuccess(isLogin ? 'Login successful!' : 'Registration successful! Please check your email to verify your account.');
+        setSuccess(isLogin ? getPageTranslation('Login successful!') : getPageTranslation('Registration successful! Please check your email to verify your account.'));
         
         // Get the redirect URL from query parameters for post-login/registration redirect
         const searchParams = new URLSearchParams(location.search);
@@ -328,7 +328,7 @@ const Auth = () => {
           navigate(redirectTo);
         }, 1500);
       } else {
-        throw new Error(result.error || 'Authentication failed');
+        throw new Error(result.error || getPageTranslation('Authentication failed'));
       }
     } catch (error) {
       setError(error.message);
@@ -339,7 +339,7 @@ const Auth = () => {
   
   const handleForgotPassword = async () => {
     if (!formData.email) {
-      setError('Please enter your email address first.');
+      setError(getPageTranslation('Please enter your email address first.'));
       return;
     }
     
@@ -351,9 +351,9 @@ const Auth = () => {
       const result = await forgotPassword(formData.email);
       
       if (result.success) {
-        setSuccess('Password reset instructions have been sent to your email.');
+        setSuccess(getPageTranslation('Password reset instructions have been sent to your email.'));
       } else {
-        throw new Error(result.error || 'Failed to send reset email');
+        throw new Error(result.error || getPageTranslation('Failed to send reset email'));
       }
     } catch (error) {
       setError(error.message);
